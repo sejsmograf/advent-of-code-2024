@@ -1,4 +1,6 @@
 (executable
  (public_name ocaml)
- (name day02)
- (libraries ocaml))
+ (name day03)
+ (flags
+  (:standard -w -32 -w -26))
+ (libraries ocaml str))
