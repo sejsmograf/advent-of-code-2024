@@ -14,17 +14,34 @@ let get_regex_matches input regex =
   in
   find_matches 0 []
 
-let silver =
+let extract_integers str = Scanf.sscanf str "mul(%d,%d)" (fun a b -> (a, b))
+
+let extract_integers_and_mul str =
+  let ints = extract_integers str in
+  fst ints * snd ints
+
+let silver () =
   let input = read_input "../inputs/03.txt" in
   let regex = Str.regexp "mul(\\([0-9]*\\),\\([0-9]*\\))" in
   let matches = get_regex_matches input regex in
 
-  List.fold_left
-    (fun a (x, y) -> a + x * y)
-    0
-    (List.map
-       (fun m -> Scanf.sscanf m "mul(%d,%d)" (fun a b -> (a, b)))
-       matches)
+  List.fold_left (fun a str -> a + extract_integers_and_mul str) 0 matches
+
+let gold () =
+  let input = read_input "../inputs/03.txt" in
+  let regex = Str.regexp "mul(\\([0-9]*\\),\\([0-9]*\\))\\|do()\\|don't()" in
+  let matches = get_regex_matches input regex in
+
+  let rec summarize l enabled acc =
+    match (l, enabled) with
+    | [], _ -> acc
+    | h :: t, _ when String.starts_with ~prefix:"don" h -> summarize t false acc
+    | h :: t, _ when String.starts_with ~prefix:"do(" h -> summarize t true acc
+    | h :: t, true -> summarize t true (acc + extract_integers_and_mul h)
+    | _ :: t, false -> summarize t false acc
+  in
+
+  summarize matches true 0
 ;;
 
-print_int silver
+print_int (gold ())
