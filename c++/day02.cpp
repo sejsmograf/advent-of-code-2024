@@ -86,7 +86,6 @@ int gold() {
   return count;
 }
 
-
 int main() {
   std::cout << "silver: " << silver() << "\n";
   std::cout << "gold: " << gold() << "\n";

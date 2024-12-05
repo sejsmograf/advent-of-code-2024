@@ -1,9 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
-#include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <iterator>
 #include <string>
 #include <vector>
 
@@ -29,19 +27,19 @@ int checkXmas(int row, int col, const std::vector<std::string> &source) {
     int dx = directions[i].first;
     int dy = directions[i].second;
 
-    for (int letter = 1; letter < search.size(); letter++) {
-      int newCol = col + letter * dx;
-      int newRow = row + letter * dy;
+    for (int letter_index = 1; letter_index < search.size(); letter_index++) {
+      int newCol = col + letter_index * dx;
+      int newRow = row + letter_index * dy;
       if (newCol < 0 || newCol >= source[0].size()) {
         break;
       }
       if (newRow < 0 || newRow >= source.size()) {
         break;
       }
-      if (source[newRow][newCol] != search[letter]) {
+      if (source[newRow][newCol] != search[letter_index]) {
         break;
       }
-      if (letter == search.size() - 1) {
+      if (letter_index == search.size() - 1) {
         sum++;
       }
     }
