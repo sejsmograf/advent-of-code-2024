@@ -129,5 +129,5 @@ int gold() {
 
 int main() {
   std::cout << "silver: " << silver() << "\n";
-  std::cout << "gold: " << gold() << "\n";
+  // std::cout << "gold: " << gold() << "\n";
 }
