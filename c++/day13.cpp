@@ -2,12 +2,13 @@
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
 
-using Button = std::pair<double, double>;
-using Target = std::pair<double, double>;
+using Button = std::pair<long double, long double>;
+using Target = std::pair<long double, long double>;
 
 struct Instruction {
   Button buttonA;
@@ -48,19 +49,22 @@ std::vector<Instruction> readInput() {
   return result;
 }
 
-double findBCoefficient(const Instruction &instruction) {
-  double coeff = (instruction.target.second * instruction.buttonA.first -
-                  instruction.target.first * instruction.buttonA.second) /
-                 (instruction.buttonB.second * instruction.buttonA.first -
-                  instruction.buttonB.first * instruction.buttonA.second);
+long double findBCoefficient(const Instruction &instruction) {
+  long double coeff = (instruction.target.second * instruction.buttonA.first -
+                       instruction.target.first * instruction.buttonA.second) /
+                      (instruction.buttonB.second * instruction.buttonA.first -
+                       instruction.buttonB.first * instruction.buttonA.second);
 
   return coeff;
 }
 
-std::pair<double, double> findIntersection(const Instruction &instruction) {
-  double b = findBCoefficient(instruction);
-  double a = (instruction.target.first - b * instruction.buttonB.first) /
-             instruction.buttonA.first;
+std::pair<long double, long double>
+findIntersection(const Instruction &instruction) {
+  long double b = findBCoefficient(instruction);
+  long double a = (instruction.target.first - b * instruction.buttonB.first) /
+                  instruction.buttonA.first;
+  std::cout << std::setprecision(20) << "Intersection " << a << " " << b
+            << "\n";
   return std::make_pair(a, b);
 }
 
@@ -91,12 +95,13 @@ unsigned long long gold() {
   for (auto &instruction : input) {
     instruction.target.first += 10000000000000;
     instruction.target.second += 10000000000000;
+    std::cout << std::setprecision(20) << instruction.target.first << " "
+              << instruction.target.second << "\n";
     auto intersection = findIntersection(instruction);
     if (intersection.first >= 0 && intersection.second >= 0 &&
-        intersection.first <= 100 && intersection.second <= 100 &&
         std::abs(intersection.first - std::round(intersection.first)) < 0.001 &&
         std::abs(intersection.second - std::round(intersection.second)) <
-            0.001) {
+            0.011) {
       sum += intersection.first * 3 + intersection.second;
     }
   }
