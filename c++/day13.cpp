@@ -63,8 +63,6 @@ findIntersection(const Instruction &instruction) {
   long double b = findBCoefficient(instruction);
   long double a = (instruction.target.first - b * instruction.buttonB.first) /
                   instruction.buttonA.first;
-  std::cout << std::setprecision(20) << "Intersection " << a << " " << b
-            << "\n";
   return std::make_pair(a, b);
 }
 
@@ -80,7 +78,6 @@ int silver() {
             0.0001 &&
         std::abs(intersection.second - std::round(intersection.second)) <
             0.0001) {
-      std::cout << intersection.first << " " << intersection.second << "\n";
       sum += intersection.first * 3 + intersection.second;
     }
   }
@@ -95,8 +92,6 @@ unsigned long long gold() {
   for (auto &instruction : input) {
     instruction.target.first += 10000000000000;
     instruction.target.second += 10000000000000;
-    std::cout << std::setprecision(20) << instruction.target.first << " "
-              << instruction.target.second << "\n";
     auto intersection = findIntersection(instruction);
     if (intersection.first >= 0 && intersection.second >= 0 &&
         std::abs(intersection.first - std::round(intersection.first)) < 0.001 &&
