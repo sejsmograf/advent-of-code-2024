@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <chrono>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -9,7 +8,6 @@
 #include <set>
 #include <stdexcept>
 #include <string>
-#include <thread>
 #include <unistd.h>
 #include <vector>
 
@@ -141,6 +139,7 @@ bool pushWallVertical(Map &map, const std::vector<Pos> &toMove,
     }
     if (atNewPos != '.') {
       possibleToMove = false;
+      break;
     }
   }
   if (possibleToMove) {
@@ -218,8 +217,6 @@ void moveRobot(Map &map, Move move) {
   }
 }
 
-bool isMoveHorizontal(Move move) { return move.first == 0; }
-
 unsigned long long sumBoxes(const Map &map) {
   unsigned long long sum = 0;
   for (int row = 0; row < map.size(); row++) {
@@ -272,7 +269,6 @@ unsigned long long gold() {
   auto moves = movesFromChars(input.second);
 
   for (auto m : moves) {
-    printMap(map);
     moveRobot(map, m);
   }
 
