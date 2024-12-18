@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstdio>
@@ -96,9 +97,7 @@ void cdv(Register &reg, const Instr &instruction) {
 }
 
 std::vector<ul> performInstructions(Register reg,
-                                    const std::vector<Instr> &instructions,
-                                    bool optimize,
-                                    const std::vector<ul> &desired) {
+                                    const std::vector<Instr> &instructions) {
   std::vector<ul> outputs;
   ul pc = 0;
 
@@ -127,12 +126,6 @@ std::vector<ul> performInstructions(Register reg,
       break;
     case 5:
       outputs.push_back(out(reg, instr));
-      if (optimize) {
-        int last = outputs.size() - 1;
-        if (last >= desired.size() || outputs[last] != desired[last]) {
-          return {};
-        }
-      }
       break;
     case 6:
       bdv(reg, instr);
@@ -149,9 +142,30 @@ std::vector<ul> performInstructions(Register reg,
   return outputs;
 }
 
+std::vector<int> getThreeBits(int desiredOutput, ul suffix, const Register &reg,
+                              const std::vector<Instr> &instructions) {
+  std::vector<int> result;
+  for (int i = 0; i <= 7; i++) {
+    Register copy(reg);
+    ul combined = suffix + i;
+    copy[0] = combined;
+    auto outputs = performInstructions(copy, instructions);
+    int createdBits = outputs[0];
+    if (createdBits == desiredOutput) {
+      result.push_back(i);
+      for (const auto out : outputs) {
+        std::cout << out << ",";
+      }
+      std::cout << "\n";
+    }
+  }
+
+  return result;
+}
+
 void silver() {
   auto input = readInput();
-  auto outputs = performInstructions(input.first, input.second, false, {});
+  auto outputs = performInstructions(input.first, input.second);
   for (const auto out : outputs) {
     std::cout << out << ",";
   }
@@ -165,24 +179,28 @@ ul gold() {
     desiredOutput.push_back(instr.second);
   }
 
-  ul index = 0;
+  std::vector<ul> possibleNumbers = {0};
+  for (int i = desiredOutput.size() - 1; i >= 0; i--) {
+    int desiredBits = desiredOutput[i];
 
-  while (true) {
-    if(index % 10000 == 0){
-      std::cout << "Checking index: " << index << "\n";
+    std::vector<ul> validSoFar;
+    for (ul suffix : possibleNumbers) {
+      std::vector<int> validBits =
+          getThreeBits(desiredBits, suffix, input.first, input.second);
+
+      for (int valid : validBits) {
+        validSoFar.push_back((suffix + valid) << 3);
+      }
     }
-
-    Register copy(input.first);
-    copy[0] = index;
-
-    auto outputs = performInstructions(copy, input.second, true, desiredOutput);
-    if (outputs == desiredOutput) {
-      break;
-    }
-    index++;
+    possibleNumbers = validSoFar;
   }
 
-  return index;
+  std::sort(possibleNumbers.begin(), possibleNumbers.end());
+  for (ul valid : possibleNumbers) {
+    std::cout << "Valid: " << (valid >> 3) << "\n";
+  }
+
+  return 0;
 }
 
 int main() {
