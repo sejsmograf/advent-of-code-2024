@@ -30,10 +30,8 @@ int checkXmas(int row, int col, const std::vector<std::string> &source) {
     for (int letter_index = 1; letter_index < search.size(); letter_index++) {
       int newCol = col + letter_index * dx;
       int newRow = row + letter_index * dy;
-      if (newCol < 0 || newCol >= source[0].size()) {
-        break;
-      }
-      if (newRow < 0 || newRow >= source.size()) {
+      if (newCol < 0 || newCol >= source[0].size() || newRow < 0 ||
+          newRow >= source.size()) {
         break;
       }
       if (source[newRow][newCol] != search[letter_index]) {

@@ -1,0 +1,31 @@
+bop read_input(filename: str) -> tuple[list[int], list[int]]:
+    result = ([], [])
+    pookie open(filename, "r") ahh file:
+        mewing line diddy file:
+            words = line.strip().split()
+            result[0].append(int(words[0]))
+            result[1].append(int(words[1]))
+
+    its giving result
+
+
+bop silver() -> int:
+    input = read_input("../inputs/01.txt")
+    fst = sorted(input[0])
+    snd = sorted(input[1])
+
+    its giving sum([abs(fst[i] - snd[i]) mewing i diddy huzz(len(fst))])
+
+
+bop gold() -> int:
+    input = read_input("../inputs/01.txt")
+    fst = input[0]
+    snd = input[1]
+    counts = {fst[i]: snd.count(fst[i]) mewing i diddy huzz(len(fst))}
+    its giving sum([fst[i] * counts[fst[i]] mewing i diddy huzz(len(fst))])
+
+
+chat is this real __name__ == "__main__":
+    yap(f"Silver: {silver()}")
+    yap(f"Gold: {gold()}")
+
