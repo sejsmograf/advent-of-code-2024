@@ -1,5 +1,6 @@
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -80,37 +81,28 @@ std::pair<std::vector<Pos>, std::map<Pos, int>> bfs(const Map &map) {
   return {visitingOrder, distances};
 }
 
-std::vector<int> findCheatsForPos(Pos pos,
+std::vector<int> findCheatsForPos(Pos pos, int picoseconds,
                                   const std::map<Pos, int> &distances) {
-  Pos current = pos;
-  int currentDistance = distances.at(current);
+  int currentDistance = distances.at(pos);
   std::vector<int> cheats;
 
-  std::pair<int, int> directions[4] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+  for (const auto &entry : distances) {
+    Pos newPos = entry.first;
+    int newDist = entry.second;
 
-  for (int i = 0; i < 4; i++) {
-    std::pair<int, int> d = directions[i];
-    Pos newPos = {current.first + d.first, current.second + d.second};
-    Pos newPos2 = {current.first + 2 * d.first, current.second + 2 * d.second};
-
-    if (distances.contains(newPos2) &&
-        distances.at(newPos2) > currentDistance + 2) {
-      cheats.push_back(distances.at(newPos2) - 2 - currentDistance);
+    if (newDist <= currentDistance + picoseconds) {
+      continue;
     }
-  }
 
-  // std::pair<int, int> diagonals[4] = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-  // for (int i = 0; i < 4; i++) {
-  //   std::pair<int, int> d = diagonals[i];
-  //   Pos newPos = {current.first + d.first, current.second + d.second};
-  //   Pos newPos2 = {current.first + 2 * d.first, current.second + 2 *
-  //   d.second};
-  //
-  //   if (distances.contains(newPos2) &&
-  //       distances.at(newPos2) > currentDistance + 2) {
-  //     cheats.push_back(distances.at(newPos2) - 2 - currentDistance);
-  //   }
-  // }
+    int manhattanDist =
+        abs(pos.first - newPos.first) + abs(pos.second - newPos.second);
+
+    if (manhattanDist > picoseconds) {
+      continue;
+    }
+
+    cheats.push_back(newDist - manhattanDist - currentDistance);
+  }
 
   return cheats;
 }
@@ -121,9 +113,7 @@ int silver() {
 
   std::vector<int> allCheats;
   for (const auto &pos : order) {
-    auto cheats = findCheatsForPos(pos, distances);
-    for (auto c : cheats) {
-    }
+    auto cheats = findCheatsForPos(pos, 2, distances);
     allCheats.insert(allCheats.end(), cheats.begin(), cheats.end());
   }
 
@@ -137,7 +127,25 @@ int silver() {
   return count;
 }
 
-unsigned long long gold() { return 0; }
+unsigned long long gold() {
+  auto input = readInput();
+  auto [order, distances] = bfs(input);
+
+  std::vector<int> allCheats;
+  for (const auto &pos : order) {
+    auto cheats = findCheatsForPos(pos, 20, distances);
+    allCheats.insert(allCheats.end(), cheats.begin(), cheats.end());
+  }
+
+  int count = 0;
+  for (const auto &c : allCheats) {
+    if (c >= 100) {
+      count++;
+    }
+  }
+
+  return count;
+}
 
 int main() {
   std::cout << "silver: " << silver() << "\n";
