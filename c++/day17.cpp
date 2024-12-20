@@ -153,10 +153,6 @@ std::vector<int> getThreeBits(int desiredOutput, ul suffix, const Register &reg,
     int createdBits = outputs[0];
     if (createdBits == desiredOutput) {
       result.push_back(i);
-      for (const auto out : outputs) {
-        std::cout << out << ",";
-      }
-      std::cout << "\n";
     }
   }
 
@@ -195,12 +191,12 @@ ul gold() {
     possibleNumbers = validSoFar;
   }
 
-  std::sort(possibleNumbers.begin(), possibleNumbers.end());
-  for (ul valid : possibleNumbers) {
-    std::cout << "Valid: " << (valid >> 3) << "\n";
+  for (int i = 0; i < possibleNumbers.size(); i++) {
+    possibleNumbers[i] = possibleNumbers[i] >> 3;
   }
 
-  return 0;
+  std::sort(possibleNumbers.begin(), possibleNumbers.end());
+  return possibleNumbers[0];
 }
 
 int main() {
