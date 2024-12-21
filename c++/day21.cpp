@@ -39,14 +39,6 @@ const std::map<char, std::vector<std::pair<char, char>>> numpadGraph = {
     {'A', {{'0', '<'}, {'3', '^'}}},
 };
 
-const std::map<char, std::vector<std::pair<char, char>>> directionalGraph = {
-    {'A', {{'>', 'v'}, {'^', '<'}}},
-    {'^', {{'v', 'v'}, {'A', '>'}}},
-    {'v', {{'<', '<'}, {'^', '^'}, {'>', '>'}}},
-    {'<', {{'v', '>'}}},
-    {'>', {{'v', '<'}, {'A', '^'}}},
-};
-
 const std::map<std::pair<char, char>, std::string> shortest = {
     {{'A', 'A'}, ""},    {{'<', '<'}, ""},   {{'>', '>'}, ""},
     {{'^', '^'}, ""},    {{'v', 'v'}, ""},
@@ -146,55 +138,6 @@ void countAndPrintChars(const std::string &input) {
   }
 }
 
-int getShortestSequence(const std::string &code) {
-  auto first = getSequences("A" + code, numpadGraph);
-
-  std::vector<std::pair<std::string, std::string>> sndWithOrigin;
-
-  for (const auto &f : first) {
-    auto next = getSequences("A" + f, directionalGraph);
-    for (const auto &s : next) {
-      sndWithOrigin.emplace_back(f, s);
-    }
-  }
-
-  std::vector<std::tuple<std::string, std::string, std::string>>
-      thirdWithOrigin;
-
-  for (const auto &pair : sndWithOrigin) {
-    const auto &originFirst = pair.first;
-    const auto &snd = pair.second;
-
-    auto next = getSequences("A" + snd, directionalGraph);
-    for (const auto &t : next) {
-      thirdWithOrigin.emplace_back(originFirst, snd, t);
-    }
-  }
-
-  std::sort(thirdWithOrigin.begin(), thirdWithOrigin.end(),
-            [](const auto &a, const auto &b) {
-              return std::get<2>(a).size() < std::get<2>(b).size();
-            });
-
-  int previousCost = 0;
-  for (const auto &triple : thirdWithOrigin) {
-    const auto &originFirst = std::get<0>(triple);
-    const auto &snd = std::get<1>(triple);
-    const auto &third = std::get<2>(triple);
-
-    if (third.size() != previousCost) {
-      std::cout << third << " len: " << third.size() << " from " << snd
-                << " from " << originFirst << "\n";
-      previousCost = third.size();
-      countAndPrintChars(originFirst);
-      countAndPrintChars(snd);
-      std::cout << "\n\n";
-    }
-  }
-
-  return std::get<2>(thirdWithOrigin[0]).size();
-}
-
 int extractNumericPart(const std::string &str) {
   int number = 0;
 
@@ -236,7 +179,7 @@ std::vector<std::string> partitionString(const std::string &str, int n) {
     if (startPos < str.size()) {
       int extraChar = (i < n - 1) ? 1 : 0;
       partitions.push_back(str.substr(startPos, partitionSize + extraChar));
-      startPos += partitionSize; // Still move by original size
+      startPos += partitionSize;
     }
   }
 
@@ -258,13 +201,14 @@ ul recursiveShortestPath(const std::string &path, int iterationsLeft,
   auto parts = partitionString(path, 4);
 
   for (int i = 0; i < parts.size(); i++) {
-    if(i == 0) {
-      total += recursiveShortestPath(getShortestPath("A" + parts[i]), iterationsLeft - 1, memo);
+    if (i == 0) {
+      total += recursiveShortestPath(getShortestPath("A" + parts[i]),
+                                     iterationsLeft - 1, memo);
     } else {
-      total += recursiveShortestPath(getShortestPath(parts[i]), iterationsLeft - 1, memo);
+      total += recursiveShortestPath(getShortestPath(parts[i]),
+                                     iterationsLeft - 1, memo);
     }
   }
-
 
   memo[{path, iterationsLeft}] = total;
   return total;
@@ -302,7 +246,6 @@ ul gold() {
 
   return sum;
 }
-
 
 int main() {
   std::cout << "silver: " << silver() << "\n";
