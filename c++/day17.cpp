@@ -196,7 +196,7 @@ ul gold() {
   }
 
   std::sort(possibleNumbers.begin(), possibleNumbers.end());
-  return possibleNumbers[0];
+  return possibleNumbers[0] << 3;
 }
 
 int main() {
