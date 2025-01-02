@@ -58,3 +58,7 @@ setup.log
 
 # Local OPAM switch
 _opam/
+
+
+# Cargo /target
+target/

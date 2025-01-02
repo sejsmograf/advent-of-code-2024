@@ -20,6 +20,8 @@ if now > datetime.datetime(2024, 12, 25):
 else:
     days = now.day
 
+if not os.path.exists("inputs"):
+    os.mkdir("inputs")
 
 
 
